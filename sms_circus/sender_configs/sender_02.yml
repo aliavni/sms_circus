@@ -1,0 +1,3 @@
+name: Sender-02
+mean_processing_time: 5
+failure_rate: 0.05

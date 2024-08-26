@@ -1,0 +1,16 @@
+[tool.mypy]
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+addopts = "--cov=. tests/"
+
+[tool.bandit.assert_used]
+skips = ["*/*_test.py", "*/test_*.py"]
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true

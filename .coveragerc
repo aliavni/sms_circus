@@ -1,0 +1,10 @@
+[run]
+omit =
+  monitor.py
+  produce.py
+  send.py
+
+[report]
+fail_under = 100
+skip_covered = false
+show_missing = true

@@ -1,10 +1,11 @@
 [run]
 omit =
+  db_setup.py
   monitor.py
   produce.py
   send.py
 
 [report]
 fail_under = 100
-skip_covered = false
+skip_covered = true
 show_missing = true

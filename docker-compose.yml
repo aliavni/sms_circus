@@ -62,6 +62,8 @@ services:
     container_name: controller
     env_file:
       - .env
+    volumes:
+      - .:/app
     depends_on:
       rabbit:
         condition: service_healthy

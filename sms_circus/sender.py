@@ -67,17 +67,6 @@ class Sender:
         conn = get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS messages (
-            id BIGSERIAL PRIMARY KEY,
-            start_time TIMESTAMP NOT NULL,
-            end_time TIMESTAMP NOT NULL,
-            failed BOOLEAN DEFAULT FALSE,
-            phone TEXT NOT NULL,
-            message TEXT NOT NULL
-        );
-        """)
-
         try:
             self.process_sms_and_simulate_error(
                 ch, method, properties, start, end, phone, message, cursor

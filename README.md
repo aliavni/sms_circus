@@ -29,7 +29,15 @@
 
 ## Run
 
-1. Produce messages
+1. Setup database
+
+    Run the following to create tables
+
+    ```bash
+    docker run --network=sms_circus_sms_circus -it --rm sms_circus-controller python db_setup.py
+    ```
+
+2. Produce messages
 
     You can run the following command without the `--messages 10` argument.
     In that case, the producer by default will produce 1000 messages.
@@ -38,7 +46,7 @@
     docker run --network=sms_circus_sms_circus -it --rm sms_circus-controller python produce.py --messages 10
     ```
 
-2. Run senders
+3. Run senders
 
     There are 3 pre-defined senders (see [sender configs](sms_circus/sender_configs)) that has different behavior.
     You can start those senders with the following command:

@@ -1,4 +1,3 @@
-import os
 from time import sleep
 
 import pandas as pd
@@ -6,22 +5,12 @@ import psycopg2
 import psycopg2.extras
 import streamlit as st
 
-DB_NAME = os.getenv("POSTGRES_DB", "sms")
-DB_USER = os.getenv("POSTGRES_USER", "sms")
-DB_PASS = os.getenv("POSTGRES_PASSWORD", "sms")
-DB_HOST = "postgres"
-DB_PORT = 5432
+from sms_circus.common.db import get_connection
 
 
 def get_data() -> pd.DataFrame:
-    conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASS,
-        port=DB_PORT,
-        host=DB_HOST,
-    )
-    conn.set_session(readonly=True, autocommit=True)
+    conn = get_connection()
+    conn.set_session(readonly=True)
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cursor.execute("SELECT * FROM messages")
@@ -51,32 +40,32 @@ with st.sidebar:
 
 records = get_data()
 
-col1, col2 = st.columns(2)
+col_sent, col_failed = st.columns(2)
 
 sent = records[~records["failed"]]
 metric_sent_messages_label = "Sent messages"
 if len(sent):
     sent_count = len(sent)
-    metric_sent_messages = col1.metric(metric_sent_messages_label, sent_count)
+    metric_sent_messages = col_sent.metric(metric_sent_messages_label, sent_count)
 
 failed = records[records["failed"]]
 metric_failed_count_label = "Failed messages"
 if len(failed):
     failed_count = len(failed)
-    metric_failed_count = col2.metric(metric_failed_count_label, failed_count)
+    metric_failed_count = col_failed.metric(metric_failed_count_label, failed_count)
 
 
-avg_sent_col, avg_failed_col = st.columns(2)
+col_avg_sent, col_avg_failed = st.columns(2)
 
 avg_sent_label = "Average time per sent "
 if len(sent):
-    avg_sent = avg_sent_col.metric(
+    avg_sent = col_avg_sent.metric(
         avg_sent_label, sent["time_to_message_seconds"].mean().round(2)
     )
 
 avg_failed_label = "Average time per failed "
 if len(failed):
-    avg_failed = avg_failed_col.metric(
+    avg_failed = col_avg_failed.metric(
         avg_failed_label, failed["time_to_message_seconds"].mean().round(2)
     )
 

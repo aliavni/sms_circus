@@ -4,19 +4,11 @@ import time
 from datetime import datetime
 
 import emoji
-import psycopg2
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic, BasicProperties
 
-from sms_circus.constants import (
-    DB_HOST,
-    DB_NAME,
-    DB_PASS,
-    DB_PORT,
-    DB_USER,
-    QUEUE_NAME,
-    RABBIT_HOST,
-)
+from sms_circus.common.db import get_connection
+from sms_circus.constants import QUEUE_NAME, RABBIT_HOST
 from sms_circus.queue import declare_queue
 
 
@@ -72,16 +64,9 @@ class Sender:
         phone = payload["phone"]
         message = payload["message"]
 
-        conn = psycopg2.connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASS,
-            port=DB_PORT,
-            host=DB_HOST,
-        )
-        conn.set_session(autocommit=True)
-
+        conn = get_connection()
         cursor = conn.cursor()
+
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS messages (
             id BIGSERIAL PRIMARY KEY,
